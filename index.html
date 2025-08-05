@@ -386,6 +386,57 @@
     <script>
         // Set today's date by default
         document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+      
+        // Supabase configuration
+const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// EmailJS configuration
+emailjs.init('YOUR_EMAILJS_PUBLIC_KEY_HERE');
+
+async function saveToDatabase(data) {
+    const { error } = await supabase
+        .from('shift_notes')
+        .insert([{
+            worker_name: data.workerName,
+            shift_date: data.shiftDate,
+            worked_hours: parseFloat(data.workedHours),
+            shift_notes: data.shiftNotes,
+            travel_km: parseInt(data.travelKm) || 0,
+            community_access: data.communityAccess,
+            incidents: Array.isArray(data.incidents) ? data.incidents : [data.incidents].filter(Boolean),
+            incident_details: data.incidentDetails,
+            mental_health_notes: data.mentalHealthNotes,
+            client_requests: data.clientRequests
+        }]);
+    
+    if (error) throw error;
+}
+
+async function sendEmails(data) {
+    const emailContent = generateEmailContent(data);
+    
+    // Send to both emails
+    const emailPromises = [
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+            to_email: 'h.h.levett@gmail.com',
+            subject: `Shift Notes - ${data.shiftDate} - ${data.workerName}`,
+            message: emailContent,
+            worker_name: data.workerName,
+            shift_date: data.shiftDate
+        }),
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+            to_email: 'harley@hyammovement.com',
+            subject: `Shift Notes - ${data.shiftDate} - ${data.workerName}`,
+            message: emailContent,
+            worker_name: data.workerName,
+            shift_date: data.shiftDate
+        })
+    ];
+    
+    await Promise.all(emailPromises);
+}
 
         // Load saved data on page load
         window.addEventListener('load', function() {
@@ -596,46 +647,52 @@
         }
 
         // Form submission
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Save worker name and email for future use
-            localStorage.setItem('workerName', document.getElementById('workerName').value);
-            localStorage.setItem('recipientEmail', document.getElementById('recipientEmail').value);
-            
-            // Simulate email sending (in a real application, this would connect to an email service)
-            const formData = new FormData(form);
-            const data = {};
-            
-            for (let [key, value] of formData.entries()) {
-                if (data[key]) {
-                    if (Array.isArray(data[key])) {
-                        data[key].push(value);
-                    } else {
-                        data[key] = [data[key], value];
-                    }
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+        showMessage('Submitting...', 'success');
+        
+        // Save worker name for future use
+        localStorage.setItem('workerName', document.getElementById('workerName').value);
+        
+        const formData = new FormData(form);
+        const data = {};
+        
+        for (let [key, value] of formData.entries()) {
+            if (data[key]) {
+                if (Array.isArray(data[key])) {
+                    data[key].push(value);
                 } else {
-                    data[key] = value;
+                    data[key] = [data[key], value];
                 }
+            } else {
+                data[key] = value;
             }
+        }
 
-            // Create email content
-            const emailContent = generateEmailContent(data);
-            
-            // In a real application, you would send this to your email service
-            // For now, we'll show a success message and clear the form
-            showMessage('Shift notes submitted successfully! Email sent to ' + data.recipientEmail, 'success');
-            
-            // Clear form except for worker name and email
-            form.reset();
-            document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
-            document.getElementById('recipientEmail').value = localStorage.getItem('recipientEmail') || '';
-            document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
-            
-            // Clear saved draft
-            localStorage.removeItem('shiftNotesData');
-            updateProgress();
-        });
+        // Save to database
+        await saveToDatabase(data);
+        
+        // Send emails
+        await sendEmails(data);
+        
+        showMessage('Shift notes submitted successfully! Saved to database and emails sent to both recipients.', 'success');
+        
+        // Clear form except for worker name
+        form.reset();
+        document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
+        document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+        
+        // Clear saved draft
+        localStorage.removeItem('shiftNotesData');
+        updateProgress();
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showMessage('Error submitting form: ' + error.message, 'error');
+    }
+});
 
         function generateEmailContent(data) {
             return `
