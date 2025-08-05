@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>Shift Notes - Joseph Levett </title>
     <style>
         * {
@@ -388,12 +389,9 @@
         document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
       
         // Supabase configuration
-const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+const SUPABASE_URL = 'https://adfqsfpfzbiwcxembchy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// EmailJS configuration
-emailjs.init('YOUR_EMAILJS_PUBLIC_KEY_HERE');
 
 async function saveToDatabase(data) {
     const { error } = await supabase
@@ -413,49 +411,6 @@ async function saveToDatabase(data) {
     
     if (error) throw error;
 }
-
-async function sendEmails(data) {
-    const emailContent = generateEmailContent(data);
-    
-    // Send to both emails
-    const emailPromises = [
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-            to_email: 'h.h.levett@gmail.com',
-            subject: `Shift Notes - ${data.shiftDate} - ${data.workerName}`,
-            message: emailContent,
-            worker_name: data.workerName,
-            shift_date: data.shiftDate
-        }),
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-            to_email: 'harley@hyammovement.com',
-            subject: `Shift Notes - ${data.shiftDate} - ${data.workerName}`,
-            message: emailContent,
-            worker_name: data.workerName,
-            shift_date: data.shiftDate
-        })
-    ];
-    
-    await Promise.all(emailPromises);
-}
-
-        // Load saved data on page load
-        window.addEventListener('load', function() {
-            loadSavedData();
-            updateProgress();
-        });
-
-        // Auto-save functionality
-        let autoSaveTimeout;
-        const form = document.getElementById('shiftNotesForm');
-        const inputs = form.querySelectorAll('input, textarea, select');
-
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                clearTimeout(autoSaveTimeout);
-                autoSaveTimeout = setTimeout(autoSave, 2000);
-                updateProgress();
-            });
-        });
 
         function autoSave() {
             const formData = new FormData(form);
@@ -646,14 +601,13 @@ async function sendEmails(data) {
             }, 5000);
         }
 
-        // Form submission
+       // Form submission
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     try {
         showMessage('Submitting...', 'success');
         
-        // Save worker name for future use
         localStorage.setItem('workerName', document.getElementById('workerName').value);
         
         const formData = new FormData(form);
@@ -670,6 +624,24 @@ form.addEventListener('submit', async function(e) {
                 data[key] = value;
             }
         }
+
+        // Save to database
+        await saveToDatabase(data);
+        
+        showMessage('Shift notes saved to database successfully!', 'success');
+        
+        // Clear form except for worker name
+        form.reset();
+        document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
+        document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+        localStorage.removeItem('shiftNotesData');
+        updateProgress();
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showMessage('Error submitting form: ' + error.message, 'error');
+    }
+});
 
         // Save to database
         await saveToDatabase(data);
