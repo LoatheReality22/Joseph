@@ -384,14 +384,16 @@
         </div>
     </div>
 
-    <script>
-        // Set today's date by default
-        document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
-      
-        // Supabase configuration
+    // Set today's date by default
+document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+
+// Supabase configuration
 const SUPABASE_URL = 'https://adfqsfpfzbiwcxembchy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Get form reference
+const form = document.getElementById('shiftNotesForm');
 
 async function saveToDatabase(data) {
     const { error } = await supabase
@@ -412,196 +414,107 @@ async function saveToDatabase(data) {
     if (error) throw error;
 }
 
-        function autoSave() {
-            const formData = new FormData(form);
-            const data = {};
-            
-            for (let [key, value] of formData.entries()) {
-                if (data[key]) {
-                    if (Array.isArray(data[key])) {
-                        data[key].push(value);
-                    } else {
-                        data[key] = [data[key], value];
-                    }
-                } else {
-                    data[key] = value;
-                }
+// Load saved data on page load
+window.addEventListener('load', function() {
+    loadSavedData();
+    updateProgress();
+});
+
+// Auto-save functionality
+let autoSaveTimeout;
+const inputs = form.querySelectorAll('input, textarea, select');
+
+inputs.forEach(input => {
+    input.addEventListener('input', function() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(autoSave, 2000);
+        updateProgress();
+    });
+});
+
+function autoSave() {
+    const formData = new FormData(form);
+    const data = {};
+    
+    for (let [key, value] of formData.entries()) {
+        if (data[key]) {
+            if (Array.isArray(data[key])) {
+                data[key].push(value);
+            } else {
+                data[key] = [data[key], value];
             }
-
-            localStorage.setItem('shiftNotesData', JSON.stringify(data));
-            
-            // Show auto-save indicator
-            const indicator = document.getElementById('autoSaveIndicator');
-            indicator.classList.add('show');
-            setTimeout(() => {
-                indicator.classList.remove('show');
-            }, 2000);
+        } else {
+            data[key] = value;
         }
+    }
 
-        function loadSavedData() {
-            const savedData = localStorage.getItem('shiftNotesData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                
-                for (let key in data) {
-                    const element = document.querySelector(`[name="${key}"]`);
-                    if (element) {
-                        if (element.type === 'checkbox') {
-                            const checkboxes = document.querySelectorAll(`[name="${key}"]`);
-                            checkboxes.forEach(cb => {
-                                if (Array.isArray(data[key])) {
-                                    cb.checked = data[key].includes(cb.value);
-                                } else {
-                                    cb.checked = cb.value === data[key];
-                                }
-                            });
+    localStorage.setItem('shiftNotesData', JSON.stringify(data));
+    
+    // Show auto-save indicator
+    const indicator = document.getElementById('autoSaveIndicator');
+    indicator.classList.add('show');
+    setTimeout(() => {
+        indicator.classList.remove('show');
+    }, 2000);
+}
+
+function loadSavedData() {
+    const savedData = localStorage.getItem('shiftNotesData');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        
+        for (let key in data) {
+            const element = document.querySelector(`[name="${key}"]`);
+            if (element) {
+                if (element.type === 'checkbox') {
+                    const checkboxes = document.querySelectorAll(`[name="${key}"]`);
+                    checkboxes.forEach(cb => {
+                        if (Array.isArray(data[key])) {
+                            cb.checked = data[key].includes(cb.value);
                         } else {
-                            element.value = data[key];
+                            cb.checked = cb.value === data[key];
                         }
-                    }
-                }
-            }
-
-            // Load saved worker name and email
-            const savedWorkerName = localStorage.getItem('workerName');
-            const savedEmail = localStorage.getItem('recipientEmail');
-            
-            if (savedWorkerName) {
-                document.getElementById('workerName').value = savedWorkerName;
-            }
-            if (savedEmail) {
-                document.getElementById('recipientEmail').value = savedEmail;
-            }
-        }
-
-        function updateProgress() {
-            const requiredFields = form.querySelectorAll('[required]');
-            let filledFields = 0;
-            
-            requiredFields.forEach(field => {
-                if (field.value.trim() !== '') {
-                    filledFields++;
-                }
-            });
-            
-            const progress = (filledFields / requiredFields.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        function saveDraft() {
-            autoSave();
-            showMessage('Draft saved successfully!', 'success');
-        }
-
-        function previewForm() {
-            const formData = new FormData(form);
-            const data = {};
-            
-            for (let [key, value] of formData.entries()) {
-                if (data[key]) {
-                    if (Array.isArray(data[key])) {
-                        data[key].push(value);
-                    } else {
-                        data[key] = [data[key], value];
-                    }
+                    });
                 } else {
-                    data[key] = value;
+                    element.value = data[key];
                 }
             }
-
-            // Create preview window
-            const previewWindow = window.open('', '_blank', 'width=800,height=600');
-            previewWindow.document.write(`
-                <html>
-                <head>
-                    <title>Shift Notes Preview</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
-                        .header { background: #4facfe; color: white; padding: 20px; text-align: center; margin-bottom: 20px; }
-                        .section { margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; }
-                        .section-title { font-weight: bold; color: #333; margin-bottom: 10px; }
-                        .field { margin-bottom: 10px; }
-                        .label { font-weight: bold; }
-                        @media print { .no-print { display: none; } }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>Shift Notes - ${data.shiftDate || 'Date Not Set'}</h1>
-                        <p>Care Documentation</p>
-                    </div>
-                    
-                    <div class="section">
-                        <div class="section-title">Basic Information</div>
-                        <div class="field"><span class="label">Worker Name:</span> ${data.workerName || 'Not specified'}</div>
-                        <div class="field"><span class="label">Client:</span> ${data.clientName || 'Not specified'}</div>
-                        <div class="field"><span class="label">Date:</span> ${data.shiftDate || 'Not specified'}</div>
-                        <div class="field"><span class="label">Hours Worked:</span> ${data.workedHours || 'Not specified'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Shift Notes & Time Worked</div>
-                        <div>${data.shiftNotes || 'No notes provided'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Hygiene</div>
-                        <div>${data.hygieneNotes || 'No observations'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Medication</div>
-                        <div>${data.medicationNotes || 'No medication notes'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Mobility</div>
-                        <div>${data.mobilityNotes || 'No mobility observations'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Travel & Community Participation</div>
-                        <div class="field"><span class="label">Kilometres Travelled:</span> ${data.travelKm || '0'}</div>
-                        <div class="field"><span class="label">Activities:</span> ${data.communityAccess || 'No activities'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Incident Report</div>
-                        <div class="field"><span class="label">Incidents:</span> ${Array.isArray(data.incidents) ? data.incidents.join(', ') : data.incidents || 'None reported'}</div>
-                        <div class="field"><span class="label">Details:</span> ${data.incidentDetails || 'No details'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Mental Health/Communication</div>
-                        <div>${data.mentalHealthNotes || 'No observations'}</div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Requests</div>
-                        <div>${data.clientRequests || 'No requests'}</div>
-                    </div>
-
-                    <div class="no-print" style="text-align: center; margin-top: 30px;">
-                        <button onclick="window.print()" style="padding: 10px 20px; background: #4facfe; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
-                        <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Close</button>
-                    </div>
-                </body>
-                </html>
-            `);
         }
+    }
 
-        function showMessage(message, type) {
-            const messageDiv = document.getElementById('statusMessage');
-            messageDiv.textContent = message;
-            messageDiv.className = `status-message status-${type}`;
-            messageDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 5000);
+    // Load saved worker name
+    const savedWorkerName = localStorage.getItem('workerName');
+    if (savedWorkerName) {
+        document.getElementById('workerName').value = savedWorkerName;
+    }
+}
+
+function updateProgress() {
+    const requiredFields = form.querySelectorAll('[required]');
+    let filledFields = 0;
+    
+    requiredFields.forEach(field => {
+        if (field.value.trim() !== '') {
+            filledFields++;
         }
+    });
+    
+    const progress = (filledFields / requiredFields.length) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+}
 
-       // Form submission
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('statusMessage');
+    messageDiv.textContent = message;
+    messageDiv.className = `status-message status-${type}`;
+    messageDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 5000);
+}
+
+// Form submission (ONLY ONE)
 form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -642,70 +555,3 @@ form.addEventListener('submit', async function(e) {
         showMessage('Error submitting form: ' + error.message, 'error');
     }
 });
-
-        // Save to database
-        await saveToDatabase(data);
-        
-        // Send emails
-        await sendEmails(data);
-        
-        showMessage('Shift notes submitted successfully! Saved to database and emails sent to both recipients.', 'success');
-        
-        // Clear form except for worker name
-        form.reset();
-        document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
-        document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
-        
-        // Clear saved draft
-        localStorage.removeItem('shiftNotesData');
-        updateProgress();
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showMessage('Error submitting form: ' + error.message, 'error');
-    }
-});
-
-        function generateEmailContent(data) {
-            return `
-SHIFT NOTES - ${data.shiftDate}
-
-BASIC INFORMATION:
-Worker Name: ${data.workerName}
-Client: ${data.clientName}
-Date: ${data.shiftDate}
-Hours Worked: ${data.workedHours}
-
-SHIFT NOTES & TIME WORKED:
-${data.shiftNotes}
-
-HYGIENE:
-${data.hygieneNotes || 'No observations'}
-
-MEDICATION:
-${data.medicationNotes || 'No medication notes'}
-
-MOBILITY:
-${data.mobilityNotes || 'No mobility observations'}
-
-TRAVEL & COMMUNITY PARTICIPATION:
-Kilometres Travelled: ${data.travelKm || '0'}
-Activities: ${data.communityAccess || 'No activities'}
-
-INCIDENT REPORT:
-Incidents: ${Array.isArray(data.incidents) ? data.incidents.join(', ') : data.incidents || 'None reported'}
-Details: ${data.incidentDetails || 'No details'}
-
-MENTAL HEALTH/COMMUNICATION:
-${data.mentalHealthNotes || 'No observations'}
-
-REQUESTS:
-${data.clientRequests || 'No requests'}
-
----
-Submitted via Digital Shift Notes System
-            `;
-        }
-    </script>
-</body>
-</html>
