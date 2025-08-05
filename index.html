@@ -415,7 +415,7 @@ async function saveToDatabase(data) {
 }
 
 // Load saved data on page load
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
     loadSavedData();
     updateProgress();
 });
