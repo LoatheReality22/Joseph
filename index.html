@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <title>Shift Notes - Joseph Levett </title>
+
+    <title>Shift Notes - Joseph Levett</title>
     <style>
         * {
             margin: 0;
@@ -179,16 +179,6 @@
             letter-spacing: 1px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
         .btn-success {
             background: #28a745;
             color: white;
@@ -308,7 +298,6 @@
                     </div>
                 </div>
 
-
                 <!-- Travel & Community Participation -->
                 <div class="section">
                     <h3 class="section-title">Travel & Community Participation</h3>
@@ -318,8 +307,8 @@
                             <input type="number" id="travelKm" name="travelKm" min="0" placeholder="16">
                         </div>
                         <div class="form-group">
-                            <label for="communityAccess">Activities Location </label>
-                            <textarea id="communityAccess" name="communityAccess" rows="2" placeholder="e.g., Where did Joseph go today? Did Jospeh stay at home?."></textarea>
+                            <label for="communityAccess">Activities Location</label>
+                            <textarea id="communityAccess" name="communityAccess" rows="2" placeholder="e.g., Where did Joseph go today? Did Joseph stay at home?"></textarea>
                         </div>
                     </div>
                 </div>
@@ -328,42 +317,42 @@
                 <div class="section">
                     <h3 class="section-title">Incident Report</h3>
                     <div class="form-group">
-                        <label>Were there any incidents today? (Select multiple boxes if neeeded) </label>
+                        <label>Were there any incidents today? (Select multiple boxes if needed)</label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="noincidence" name="incidents" value="falls">
-                                <label for="incidentFalls">No Incidents</label>
+                                <input type="checkbox" id="noincidence" name="incidents" value="no_incidents">
+                                <label for="noincidence">No Incidents</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="incidentRisks" name="incidents" value="risks">
-                                <label for="incidentRisks"> Potential Risks</label>
+                                <label for="incidentRisks">Potential Risks</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="incidentInjury" name="incidents" value="injury">
-                                <label for="incidentInjury">Injury Log </label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="behaviouralincident" name="incidents" value="abuse">
-                                <label for="incidentAbuse">Behaviourial Incident</label>
+                                <label for="incidentInjury">Injury Log</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="incidentContact" name="incidents" value="contact">
+                                <input type="checkbox" id="behaviouralincident" name="incidents" value="behavioral">
+                                <label for="behaviouralincident">Behavioural Incident</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="incidentContact" name="incidents" value="physical">
                                 <label for="incidentContact">Physical Incident</label>
                             </div>
-                          
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="incidentDetails">Incident Details (if any)</label>
                         <textarea id="incidentDetails" name="incidentDetails" rows="3" placeholder="Provide detailed description of any incidents..."></textarea>
                     </div>
+                </div>
 
                 <!-- Mental Health/Communication -->
                 <div class="section">
                     <h3 class="section-title">Mental Health/Communication</h3>
                     <div class="form-group">
                         <label for="mentalHealthNotes">Mental health observations and communication notes</label>
-                        <textarea id="mentalHealthNotes" name="mentalHealthNotes" rows="3" placeholder="e.g., Joseph was very calm for most of the day however became quite agitated when ect.."></textarea>
+                        <textarea id="mentalHealthNotes" name="mentalHealthNotes" rows="3" placeholder="e.g., Joseph was very calm for most of the day however became quite agitated when..."></textarea>
                     </div>
                 </div>
 
@@ -371,190 +360,199 @@
                 <div class="section">
                     <h3 class="section-title">Requests</h3>
                     <div class="form-group">
-                        <label for="clientRequests">Josephs requests and special notes</label>
-                        <textarea id="clientRequests" name="clientRequests" rows="3" placeholder="e.g., Did Joseph ask for any requests during your shift for next time? Is there something Hala & Gavin Might need informing of?"></textarea>
+                        <label for="clientRequests">Joseph's requests and special notes</label>
+                        <textarea id="clientRequests" name="clientRequests" rows="3" placeholder="e.g., Did Joseph ask for any requests during your shift for next time? Is there something Hala & Gavin might need informing of?"></textarea>
                     </div>
-                </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-success">Submit & Email</button>
+                    <button type="submit" class="btn btn-success">Submit & Save</button>
                 </div>
             </form>
         </div>
     </div>
-<script>
-    // Set today's date by default
-document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
 
-// Supabase configuration
-const SUPABASE_URL = 'https://adfqsfpfzbiwcxembchy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script>
+        // Simple Supabase client implementation
+        function createSupabaseClient(url, key) {
+            return {
+                from: function(table) {
+                    return {
+                        insert: async function(data) {
+                            try {
+                                const response = await fetch(`${url}/rest/v1/${table}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'apikey': key,
+                                        'Authorization': `Bearer ${key}`,
+                                        'Prefer': 'return=minimal'
+                                    },
+                                    body: JSON.stringify(data)
+                                });
 
-// Get form reference
-const form = document.getElementById('shiftNotesForm');
+                                if (!response.ok) {
+                                    const errorText = await response.text();
+                                    throw new Error(`Database error: ${response.status} - ${errorText}`);
+                                }
 
-async function saveToDatabase(data) {
-    const { error } = await supabase
-        .from('shift_notes')
-        .insert([{
-            worker_name: data.workerName,
-            shift_date: data.shiftDate,
-            worked_hours: parseFloat(data.workedHours),
-            shift_notes: data.shiftNotes,
-            travel_km: parseInt(data.travelKm) || 0,
-            community_access: data.communityAccess,
-            incidents: Array.isArray(data.incidents) ? data.incidents : [data.incidents].filter(Boolean),
-            incident_details: data.incidentDetails,
-            mental_health_notes: data.mentalHealthNotes,
-            client_requests: data.clientRequests
-        }]);
-    
-    if (error) throw error;
-}
-
-// Load saved data on page load
-window.addEventListener('load', async function() {
-    loadSavedData();
-    updateProgress();
-});
-
-// Auto-save functionality
-let autoSaveTimeout;
-const inputs = form.querySelectorAll('input, textarea, select');
-
-inputs.forEach(input => {
-    input.addEventListener('input', function() {
-        clearTimeout(autoSaveTimeout);
-        autoSaveTimeout = setTimeout(autoSave, 2000);
-        updateProgress();
-    });
-});
-
-function autoSave() {
-    const formData = new FormData(form);
-    const data = {};
-    
-    for (let [key, value] of formData.entries()) {
-        if (data[key]) {
-            if (Array.isArray(data[key])) {
-                data[key].push(value);
-            } else {
-                data[key] = [data[key], value];
-            }
-        } else {
-            data[key] = value;
-        }
-    }
-
-    localStorage.setItem('shiftNotesData', JSON.stringify(data));
-    
-    // Show auto-save indicator
-    const indicator = document.getElementById('autoSaveIndicator');
-    indicator.classList.add('show');
-    setTimeout(() => {
-        indicator.classList.remove('show');
-    }, 2000);
-}
-
-function loadSavedData() {
-    const savedData = localStorage.getItem('shiftNotesData');
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        
-        for (let key in data) {
-            const element = document.querySelector(`[name="${key}"]`);
-            if (element) {
-                if (element.type === 'checkbox') {
-                    const checkboxes = document.querySelectorAll(`[name="${key}"]`);
-                    checkboxes.forEach(cb => {
-                        if (Array.isArray(data[key])) {
-                            cb.checked = data[key].includes(cb.value);
-                        } else {
-                            cb.checked = cb.value === data[key];
+                                return { data: null, error: null };
+                            } catch (error) {
+                                return { data: null, error: error };
+                            }
                         }
-                    });
-                } else {
-                    element.value = data[key];
+                    };
                 }
+            };
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase configuration
+            const SUPABASE_URL = 'https://adfqsfpfzbiwcxembchy.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4';
+            const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Get form reference
+            const form = document.getElementById('shiftNotesForm');
+
+            // Set today's date by default
+            document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+
+            // Load saved worker name
+            const savedWorkerName = localStorage.getItem('workerName');
+            if (savedWorkerName) {
+                document.getElementById('workerName').value = savedWorkerName;
             }
-        }
-    }
 
-    // Load saved worker name
-    const savedWorkerName = localStorage.getItem('workerName');
-    if (savedWorkerName) {
-        document.getElementById('workerName').value = savedWorkerName;
-    }
-}
+            // Auto-save functionality
+            let autoSaveTimeout;
+            const inputs = form.querySelectorAll('input, textarea, select');
 
-function updateProgress() {
-    const requiredFields = form.querySelectorAll('[required]');
-    let filledFields = 0;
-    
-    requiredFields.forEach(field => {
-        if (field.value.trim() !== '') {
-            filledFields++;
-        }
-    });
-    
-    const progress = (filledFields / requiredFields.length) * 100;
-    document.getElementById('progressFill').style.width = progress + '%';
-}
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    clearTimeout(autoSaveTimeout);
+                    autoSaveTimeout = setTimeout(autoSave, 2000);
+                    updateProgress();
+                });
+            });
 
-function showMessage(message, type) {
-    const messageDiv = document.getElementById('statusMessage');
-    messageDiv.textContent = message;
-    messageDiv.className = `status-message status-${type}`;
-    messageDiv.style.display = 'block';
-    
-    setTimeout(() => {
-        messageDiv.style.display = 'none';
-    }, 5000);
-}
-
-// Form submission (ONLY ONE)
-form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    try {
-        showMessage('Submitting...', 'success');
-        
-        localStorage.setItem('workerName', document.getElementById('workerName').value);
-        
-        const formData = new FormData(form);
-        const data = {};
-        
-        for (let [key, value] of formData.entries()) {
-            if (data[key]) {
-                if (Array.isArray(data[key])) {
-                    data[key].push(value);
-                } else {
-                    data[key] = [data[key], value];
+            function autoSave() {
+                const formData = new FormData(form);
+                const data = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    if (data[key]) {
+                        if (Array.isArray(data[key])) {
+                            data[key].push(value);
+                        } else {
+                            data[key] = [data[key], value];
+                        }
+                    } else {
+                        data[key] = value;
+                    }
                 }
-            } else {
-                data[key] = value;
-            }
-        }
 
-        // Save to database
-        await saveToDatabase(data);
-        
-        showMessage('Shift notes saved to database successfully!', 'success');
-        
-        // Clear form except for worker name
-        form.reset();
-        document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
-        document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
-        localStorage.removeItem('shiftNotesData');
-        updateProgress();
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showMessage('Error submitting form: ' + error.message, 'error');
-    }
-});
-</script>
+                localStorage.setItem('shiftNotesData', JSON.stringify(data));
+                
+                // Show auto-save indicator
+                const indicator = document.getElementById('autoSaveIndicator');
+                indicator.classList.add('show');
+                setTimeout(() => {
+                    indicator.classList.remove('show');
+                }, 2000);
+            }
+
+            function updateProgress() {
+                const requiredFields = form.querySelectorAll('[required]');
+                let filledFields = 0;
+                
+                requiredFields.forEach(field => {
+                    if (field.value.trim() !== '') {
+                        filledFields++;
+                    }
+                });
+                
+                const progress = (filledFields / requiredFields.length) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+            }
+
+            function showMessage(message, type) {
+                const messageDiv = document.getElementById('statusMessage');
+                messageDiv.textContent = message;
+                messageDiv.className = `status-message status-${type}`;
+                messageDiv.style.display = 'block';
+                
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+
+            async function saveToDatabase(data) {
+                const { error } = await supabase
+                    .from('shift_notes')
+                    .insert([{
+                        worker_name: data.workerName,
+                        shift_date: data.shiftDate,
+                        worked_hours: parseFloat(data.workedHours) || 0,
+                        shift_notes: data.shiftNotes,
+                        travel_km: parseInt(data.travelKm) || 0,
+                        community_access: data.communityAccess || '',
+                        incidents: Array.isArray(data.incidents) ? data.incidents : (data.incidents ? [data.incidents] : []),
+                        incident_details: data.incidentDetails || '',
+                        mental_health_notes: data.mentalHealthNotes || '',
+                        client_requests: data.clientRequests || ''
+                    }]);
+                
+                if (error) throw error;
+            }
+
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    showMessage('Submitting...', 'success');
+                    
+                    // Save worker name for future use
+                    localStorage.setItem('workerName', document.getElementById('workerName').value);
+                    
+                    const formData = new FormData(form);
+                    const data = {};
+                    
+                    for (let [key, value] of formData.entries()) {
+                        if (data[key]) {
+                            if (Array.isArray(data[key])) {
+                                data[key].push(value);
+                            } else {
+                                data[key] = [data[key], value];
+                            }
+                        } else {
+                            data[key] = value;
+                        }
+                    }
+
+                    // Save to database
+                    await saveToDatabase(data);
+                    
+                    showMessage('Shift notes saved to database successfully!', 'success');
+                    
+                    // Clear form except for worker name
+                    form.reset();
+                    document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
+                    document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+                    localStorage.removeItem('shiftNotesData');
+                    updateProgress();
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Error submitting form: ' + error.message, 'error');
+                }
+            });
+
+            // Initialize progress on load
+            updateProgress();
+        });
+    </script>
 </body>
 </html>
