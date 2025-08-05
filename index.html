@@ -320,23 +320,6 @@
                     </div>
                 </div>
 
-                <!-- Medication -->
-                <div class="section">
-                    <h3 class="section-title">Medication</h3>
-                    <div class="form-group">
-                        <label for="medicationNotes">Medication administered or observed taking</label>
-                        <textarea id="medicationNotes" name="medicationNotes" rows="3" placeholder="e.g., I observed client take their daily medication. I did not administer any medication."></textarea>
-                    </div>
-                </div>
-
-                <!-- Mobility -->
-                <div class="section">
-                    <h3 class="section-title">Mobility</h3>
-                    <div class="form-group">
-                        <label for="mobilityNotes">Mobility observations and assistance</label>
-                        <textarea id="mobilityNotes" name="mobilityNotes" rows="3" placeholder="e.g., Client was very wobbly on their feet today. Client said they felt very tired."></textarea>
-                    </div>
-                </div>
 
                 <!-- Travel & Community Participation -->
                 <div class="section">
@@ -357,43 +340,43 @@
                 <div class="section">
                     <h3 class="section-title">Incident Report</h3>
                     <div class="form-group">
-                        <label>Were there any incidents today?</label>
+                        <label>Were there any incidents today? (Select multiple boxes if neeeded) </label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="incidentFalls" name="incidents" value="falls">
-                                <label for="incidentFalls">Falls</label>
+                                <input type="checkbox" id="noincidence" name="incidents" value="falls">
+                                <label for="incidentFalls">No Incidents</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="incidentRisks" name="incidents" value="risks">
-                                <label for="incidentRisks">Risks</label>
+                                <label for="incidentRisks"> Potential Risks</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="incidentInjury" name="incidents" value="injury">
-                                <label for="incidentInjury">Injury</label>
+                                <label for="incidentInjury">Injury Log </label>
                             </div>
+                            
                             <div class="checkbox-item">
-                                <input type="checkbox" id="incidentRestrictive" name="incidents" value="restrictive">
-                                <label for="incidentRestrictive">Unauthorized Restrictive Practices</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="incidentAbuse" name="incidents" value="abuse">
-                                <label for="incidentAbuse">Abuse</label>
+                                <input type="checkbox" id="behaviouralincident" name="incidents" value="abuse">
+                                <label for="incidentAbuse">Behaviourial Incident</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="incidentContact" name="incidents" value="contact">
-                                <label for="incidentContact">Unlawful Sexual/Physical Contact</label>
+                                <label for="incidentContact">Physical Incident</label>
                             </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="incidentDrugs" name="incidents" value="drugs">
-                                <label for="incidentDrugs">Drug Use</label>
-                            </div>
-                        </div>
+                          
                     </div>
                     <div class="form-group">
                         <label for="incidentDetails">Incident Details (if any)</label>
                         <textarea id="incidentDetails" name="incidentDetails" rows="3" placeholder="Provide detailed description of any incidents..."></textarea>
                     </div>
-                </div>
+
+                 <!-- Shift Activity Log-->
+                <div class="section">
+                    <h3 class="section-title">Shift Activity Log</h3>
+                    <div class="form-group">
+                        <label for="mentalHealthNotes">List all the Activities that took place during your shift, including any times</label>
+                        <textarea id="mentalHealthNotes" name="mentalHealthNotes" rows="3" placeholder="e.g., Client was very clear for most of the day however became quite agitated with the workman as he made a mess."></textarea>
+                    </div>
 
                 <!-- Mental Health/Communication -->
                 <div class="section">
@@ -423,8 +406,6 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">Save Draft</button>
-                    <button type="button" class="btn btn-primary" onclick="previewForm()">Preview</button>
                     <button type="submit" class="btn btn-success">Submit & Email</button>
                 </div>
             </form>
