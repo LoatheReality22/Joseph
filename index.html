@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Shift Notes - Joseph Levett</title>
     <style>
         * {
@@ -50,20 +49,24 @@
             padding: 40px;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            margin-bottom: 30px;
-            overflow: hidden;
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-            width: 0%;
-            transition: width 0.3s ease;
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .section {
@@ -107,9 +110,7 @@
         input[type="text"],
         input[type="date"],
         input[type="number"],
-        input[type="email"],
-        textarea,
-        select {
+        textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -119,8 +120,7 @@
         }
 
         input:focus,
-        textarea:focus,
-        select:focus {
+        textarea:focus {
             outline: none;
             border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
@@ -159,8 +159,7 @@
         }
 
         .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
             gap: 15px;
             margin-top: 40px;
             padding-top: 30px;
@@ -182,6 +181,7 @@
         .btn-success {
             background: #28a745;
             color: white;
+            flex: 1;
         }
 
         .btn:hover {
@@ -189,24 +189,10 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
 
-        .status-message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 500;
-            display: none;
-        }
-
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         @media (max-width: 768px) {
@@ -230,30 +216,9 @@
                 font-size: 2em;
             }
         }
-
-        .auto-save-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .auto-save-indicator.show {
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
-    <div class="auto-save-indicator" id="autoSaveIndicator">
-        ✓ Auto-saved
-    </div>
-
     <div class="container">
         <div class="header">
             <h1>Shift Notes</h1>
@@ -261,10 +226,6 @@
         </div>
 
         <div class="form-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-
             <div class="status-message" id="statusMessage"></div>
 
             <form id="shiftNotesForm">
@@ -366,7 +327,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-success">Submit & Save</button>
+                    <button type="submit" class="btn btn-success" id="submitBtn">Submit & Save</button>
                 </div>
             </form>
         </div>
@@ -406,39 +367,65 @@
             };
         }
 
-        // Initialize everything when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Supabase configuration
-            const SUPABASE_URL = 'https://adfqsfpfzbiwcxembchy.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4';
-            const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Supabase configuration
+        const SUPABASE_URL = 'https://adfqsfpfzbiwcxembchy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4';
+        const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // Get form reference
-            const form = document.getElementById('shiftNotesForm');
+        // Set today's date by default
+        document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
 
-            // Set today's date by default
-            document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+        // Load saved worker name
+        const savedWorkerName = localStorage.getItem('workerName');
+        if (savedWorkerName) {
+            document.getElementById('workerName').value = savedWorkerName;
+        }
 
-            // Load saved worker name
-            const savedWorkerName = localStorage.getItem('workerName');
-            if (savedWorkerName) {
-                document.getElementById('workerName').value = savedWorkerName;
-            }
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('statusMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `status-message status-${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
 
-            // Auto-save functionality
-            let autoSaveTimeout;
-            const inputs = form.querySelectorAll('input, textarea, select');
+        async function saveToDatabase(data) {
+            const { error } = await supabase
+                .from('shift_notes')
+                .insert([{
+                    worker_name: data.workerName,
+                    shift_date: data.shiftDate,
+                    worked_hours: parseFloat(data.workedHours) || 0,
+                    shift_notes: data.shiftNotes,
+                    travel_km: parseInt(data.travelKm) || 0,
+                    community_access: data.communityAccess || '',
+                    incidents: Array.isArray(data.incidents) ? data.incidents : (data.incidents ? [data.incidents] : []),
+                    incident_details: data.incidentDetails || '',
+                    mental_health_notes: data.mentalHealthNotes || '',
+                    client_requests: data.clientRequests || ''
+                }]);
+            
+            if (error) throw error;
+        }
 
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    clearTimeout(autoSaveTimeout);
-                    autoSaveTimeout = setTimeout(autoSave, 2000);
-                    updateProgress();
-                });
-            });
-
-            function autoSave() {
-                const formData = new FormData(form);
+        // Form submission
+        document.getElementById('shiftNotesForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                showMessage('Submitting...', 'success');
+                
+                // Save worker name for future use
+                localStorage.setItem('workerName', document.getElementById('workerName').value);
+                
+                const formData = new FormData(this);
                 const data = {};
                 
                 for (let [key, value] of formData.entries()) {
@@ -453,105 +440,23 @@
                     }
                 }
 
-                localStorage.setItem('shiftNotesData', JSON.stringify(data));
+                // Save to database
+                await saveToDatabase(data);
                 
-                // Show auto-save indicator
-                const indicator = document.getElementById('autoSaveIndicator');
-                indicator.classList.add('show');
-                setTimeout(() => {
-                    indicator.classList.remove('show');
-                }, 2000);
+                showMessage('Shift notes saved successfully! Email will be sent automatically.', 'success');
+                
+                // Clear form except for worker name
+                this.reset();
+                document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
+                document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Error submitting form: ' + error.message, 'error');
             }
-
-            function updateProgress() {
-                const requiredFields = form.querySelectorAll('[required]');
-                let filledFields = 0;
-                
-                requiredFields.forEach(field => {
-                    if (field.value.trim() !== '') {
-                        filledFields++;
-                    }
-                });
-                
-                const progress = (filledFields / requiredFields.length) * 100;
-                document.getElementById('progressFill').style.width = progress + '%';
-            }
-
-            function showMessage(message, type) {
-                const messageDiv = document.getElementById('statusMessage');
-                messageDiv.textContent = message;
-                messageDiv.className = `status-message status-${type}`;
-                messageDiv.style.display = 'block';
-                
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 5000);
-            }
-
-            async function saveToDatabase(data) {
-                const { error } = await supabase
-                    .from('shift_notes')
-                    .insert([{
-                        worker_name: data.workerName,
-                        shift_date: data.shiftDate,
-                        worked_hours: parseFloat(data.workedHours) || 0,
-                        shift_notes: data.shiftNotes,
-                        travel_km: parseInt(data.travelKm) || 0,
-                        community_access: data.communityAccess || '',
-                        incidents: Array.isArray(data.incidents) ? data.incidents : (data.incidents ? [data.incidents] : []),
-                        incident_details: data.incidentDetails || '',
-                        mental_health_notes: data.mentalHealthNotes || '',
-                        client_requests: data.clientRequests || ''
-                    }]);
-                
-                if (error) throw error;
-            }
-
-            // Form submission
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                try {
-                    showMessage('Submitting...', 'success');
-                    
-                    // Save worker name for future use
-                    localStorage.setItem('workerName', document.getElementById('workerName').value);
-                    
-                    const formData = new FormData(form);
-                    const data = {};
-                    
-                    for (let [key, value] of formData.entries()) {
-                        if (data[key]) {
-                            if (Array.isArray(data[key])) {
-                                data[key].push(value);
-                            } else {
-                                data[key] = [data[key], value];
-                            }
-                        } else {
-                            data[key] = value;
-                        }
-                    }
-
-                    // Save to database
-                    await saveToDatabase(data);
-                    
-                    showMessage('Shift notes saved to database successfully!', 'success');
-                    
-                    // Clear form except for worker name
-                    form.reset();
-                    document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
-                    document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
-                    localStorage.removeItem('shiftNotesData');
-                    updateProgress();
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    showMessage('Error submitting form: ' + error.message, 'error');
-                }
-            });
-
-            // Initialize progress on load
-            updateProgress();
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit & Save';
         });
     </script>
 </body>
