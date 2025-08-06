@@ -451,7 +451,8 @@
                 await saveToDatabase(data);
                 
                 // Send email directly using Resend API
-               await sendEmailJS(data);
+                console.log("DATA TO EMAILJS:", data);
+                await sendEmailJS(data);
                 
                 showMessage('Shift notes saved successfully and email sent!', 'success');
                 
