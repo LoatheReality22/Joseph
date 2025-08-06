@@ -464,41 +464,26 @@
 
         // Add email sending function
         async function sendEmail(data) {
-            const emailHtml = `
-                <h2>New Shift Notes Submitted</h2>
-                <p><strong>Worker:</strong> ${data.workerName}</p>
-                <p><strong>Date:</strong> ${data.shiftDate}</p>
-                <p><strong>Hours:</strong> ${data.workedHours}</p>
-                
-                <h3>Shift Notes:</h3>
-                <p>${data.shiftNotes}</p>
-                
-                <h3>Travel & Community:</h3>
-                <p><strong>Kilometres:</strong> ${data.travelKm || 0}</p>
-                <p><strong>Activities:</strong> ${data.communityAccess || 'None'}</p>
-                
-                <h3>Incidents:</h3>
-                <p><strong>Types:</strong> ${Array.isArray(data.incidents) ? data.incidents.join(', ') : data.incidents || 'None'}</p>
-                <p><strong>Details:</strong> ${data.incidentDetails || 'None'}</p>
-                
-                <h3>Mental Health:</h3>
-                <p>${data.mentalHealthNotes || 'No observations'}</p>
-                
-                <h3>Requests:</h3>
-                <p>${data.clientRequests || 'No requests'}</p>
-            `;
-
-            const response = await fetch('https://api.resend.com/emails', {
+            // Call our Edge Function instead of Resend directly
+            const response = await fetch('https://adfqsfpfzbiwcxembchy.supabase.co/functions/v1/send-shift-notes-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer re_LcQMqfin_Q7gUNDphauASsfFU4tD2kM4f',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4',
                 },
                 body: JSON.stringify({
-                    from: 'Shift Notes <onboarding@resend.dev>',
-                    to: ['harley@hyammovement.com'],
-                    subject: `Shift Notes - ${data.shiftDate} - ${data.workerName}`,
-                    html: emailHtml,
+                    record: {
+                        worker_name: data.workerName,
+                        shift_date: data.shiftDate,
+                        worked_hours: parseFloat(data.workedHours) || 0,
+                        shift_notes: data.shiftNotes,
+                        travel_km: parseInt(data.travelKm) || 0,
+                        community_access: data.communityAccess || '',
+                        incidents: Array.isArray(data.incidents) ? data.incidents : (data.incidents ? [data.incidents] : []),
+                        incident_details: data.incidentDetails || '',
+                        mental_health_notes: data.mentalHealthNotes || '',
+                        client_requests: data.clientRequests || ''
+                    }
                 }),
             });
 
