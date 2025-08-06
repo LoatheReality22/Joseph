@@ -217,6 +217,13 @@
             }
         }
     </style>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+   (function(){
+      emailjs.init('EMfxa0g4SvB4XjTfI');
+   })();
+</script>
+
 </head>
 <body>
     <div class="container">
@@ -444,7 +451,7 @@
                 await saveToDatabase(data);
                 
                 // Send email directly using Resend API
-                await sendEmail(data);
+               await sendEmailJS(data);
                 
                 showMessage('Shift notes saved successfully and email sent!', 'success');
                 
@@ -461,6 +468,24 @@
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit & Save';
         });
+
+        async function sendEmailJS(data) {
+    const params = {
+        worker_name: data.workerName,
+        shift_date: data.shiftDate,
+        worked_hours: data.workedHours,
+        shift_notes: data.shiftNotes,
+        travel_km: data.travelKm || '',
+        community_access: data.communityAccess || '',
+        incidents: Array.isArray(data.incidents) ? data.incidents.join(', ') : (data.incidents || ''),
+        incident_details: data.incidentDetails || '',
+        mental_health_notes: data.mentalHealthNotes || '',
+        client_requests: data.clientRequests || ''
+    };
+
+    return emailjs.send('service_x73rd4l', 'template_vf36fym', params);
+}
+
 
         // Add email sending function
         async function sendEmail(data) {
