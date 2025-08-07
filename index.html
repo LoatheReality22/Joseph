@@ -455,7 +455,7 @@ if (responseText === "OK") {
 try {
     return JSON.parse(responseText);
 } catch {
-    return { success: true };
+    return { success: true, message: responseText };
 }
 
         // Form submission
