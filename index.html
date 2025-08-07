@@ -437,15 +437,25 @@
         }
 
         async function sendEmailViaSupabase(data) {
+            // Format incidents as array for the Edge Function
+            let incidentsArray = [];
+            if (data.incidents) {
+                if (Array.isArray(data.incidents)) {
+                    incidentsArray = data.incidents;
+                } else {
+                    incidentsArray = [data.incidents];
+                }
+            }
+
             const { data: result, error } = await supabase.functions.invoke('send-shift-notes-email', {
                 body: {
                     worker_name: data.workerName,
                     shift_date: data.shiftDate,
                     worked_hours: data.workedHours,
                     shift_notes: data.shiftNotes,
-                    travel_km: data.travelKm || '',
+                    travel_km: parseInt(data.travelKm) || 0,
                     community_access: data.communityAccess || '',
-                    incidents: Array.isArray(data.incidents) ? data.incidents.join(', ') : (data.incidents || ''),
+                    incidents: incidentsArray,
                     incident_details: data.incidentDetails || '',
                     mental_health_notes: data.mentalHealthNotes || '',
                     client_requests: data.clientRequests || ''
