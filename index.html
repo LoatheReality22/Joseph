@@ -252,7 +252,7 @@
 
                 <!-- Shift Notes -->
                 <div class="section">
-                    <h3 class="section-title">Shift Notes</h3>
+                    <h3 class="section-title">Shift Notes & Time Worked</h3>
                     <div class="form-group">
                         <label for="shiftNotes">Please be very detailed about activities and tasks completed *</label>
                         <textarea id="shiftNotes" name="shiftNotes" rows="5" required placeholder="e.g., Assisted Joseph to.., Went to Uni with Joseph and....."></textarea>
@@ -308,11 +308,11 @@
                     </div>
                 </div>
 
-                <!-- Wellbeing -->
+                <!-- Mental Health/Communication -->
                 <div class="section">
-                    <h3 class="section-title">Wellbeing</h3>
+                    <h3 class="section-title">Mental Health/Communication</h3>
                     <div class="form-group">
-                        <label for="mentalHealthNotes">Wellbeing</label>
+                        <label for="mentalHealthNotes">Mental health observations and communication notes</label>
                         <textarea id="mentalHealthNotes" name="mentalHealthNotes" rows="3" placeholder="e.g., Joseph was very calm for most of the day however became quite agitated when..."></textarea>
                     </div>
                 </div>
@@ -445,18 +445,8 @@
                 throw new Error(`EmailJS API error: ${response.status} - ${errorText}`);
             }
 
-           // EmailJS returns "OK" text, not JSON
-const responseText = await response.text();
-if (responseText === "OK") {
-    return { success: true };
-}
-
-// Try to parse as JSON if it's not "OK"
-try {
-    return JSON.parse(responseText);
-} catch {
-    return { success: true, message: responseText };
-}
+            return response.json();
+        }
 
         // Form submission
         document.getElementById('shiftNotesForm').addEventListener('submit', async function(e) {
