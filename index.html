@@ -110,6 +110,7 @@
         input[type="text"],
         input[type="date"],
         input[type="number"],
+        input[type="hidden"],
         textarea {
             width: 100%;
             padding: 12px 15px;
@@ -228,24 +229,29 @@
         <div class="form-container">
             <div class="status-message" id="statusMessage"></div>
 
-            <form id="shiftNotesForm">
+            <form id="shiftNotesForm" action="https://formsubmit.co/harley@hyammovement.com" method="POST">
+                <!-- FormSubmit Configuration -->
+                <input type="hidden" name="_subject" value="New Shift Notes Submitted">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="javascript:void(0)">
+                
                 <!-- Basic Information -->
                 <div class="section">
                     <h3 class="section-title">Basic Information</h3>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="workerName">Your Name *</label>
-                            <input type="text" id="workerName" name="workerName" required>
+                            <input type="text" id="workerName" name="Worker Name" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="shiftDate">Date *</label>
-                            <input type="date" id="shiftDate" name="shiftDate" required>
+                            <input type="date" id="shiftDate" name="Shift Date" required>
                         </div>
                         <div class="form-group">
                             <label for="workedHours">Hours Worked *</label>
-                            <input type="number" id="workedHours" name="workedHours" min="0" max="24" step="0.5" required>
+                            <input type="number" id="workedHours" name="Hours Worked" min="0" max="24" step="0.5" required>
                         </div>
                     </div>
                 </div>
@@ -255,7 +261,7 @@
                     <h3 class="section-title">Shift Notes & Time Worked</h3>
                     <div class="form-group">
                         <label for="shiftNotes">Please be very detailed about activities and tasks completed *</label>
-                        <textarea id="shiftNotes" name="shiftNotes" rows="5" required placeholder="e.g., Assisted Joseph to.., Went to Uni with Joseph and....."></textarea>
+                        <textarea id="shiftNotes" name="Shift Notes" rows="5" required placeholder="e.g., Assisted Joseph to.., Went to Uni with Joseph and....."></textarea>
                     </div>
                 </div>
 
@@ -265,11 +271,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="travelKm">Kilometres (If claiming)</label>
-                            <input type="number" id="travelKm" name="travelKm" min="0" placeholder="16">
+                            <input type="number" id="travelKm" name="Travel KM" min="0" placeholder="16">
                         </div>
                         <div class="form-group">
                             <label for="communityAccess">Activities Location</label>
-                            <textarea id="communityAccess" name="communityAccess" rows="2" placeholder="e.g., Where did Joseph go today? Did Joseph stay at home?"></textarea>
+                            <textarea id="communityAccess" name="Activities Location" rows="2" placeholder="e.g., Where did Joseph go today? Did Joseph stay at home?"></textarea>
                         </div>
                     </div>
                 </div>
@@ -281,30 +287,30 @@
                         <label>Were there any incidents today? (Select multiple boxes if needed)</label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="noincidence" name="incidents" value="no_incidents">
+                                <input type="checkbox" id="noincidence" name="Incidents" value="No Incidents">
                                 <label for="noincidence">No Incidents</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="incidentRisks" name="incidents" value="risks">
+                                <input type="checkbox" id="incidentRisks" name="Incidents" value="Potential Risks">
                                 <label for="incidentRisks">Potential Risks</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="incidentInjury" name="incidents" value="injury">
+                                <input type="checkbox" id="incidentInjury" name="Incidents" value="Injury Log">
                                 <label for="incidentInjury">Injury Log</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="behaviouralincident" name="incidents" value="behavioral">
+                                <input type="checkbox" id="behaviouralincident" name="Incidents" value="Behavioural Incident">
                                 <label for="behaviouralincident">Behavioural Incident</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="incidentContact" name="incidents" value="physical">
+                                <input type="checkbox" id="incidentContact" name="Incidents" value="Physical Incident">
                                 <label for="incidentContact">Physical Incident</label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="incidentDetails">Incident Details (if any)</label>
-                        <textarea id="incidentDetails" name="incidentDetails" rows="3" placeholder="Provide detailed description of any incidents..."></textarea>
+                        <textarea id="incidentDetails" name="Incident Details" rows="3" placeholder="Provide detailed description of any incidents..."></textarea>
                     </div>
                 </div>
 
@@ -313,7 +319,7 @@
                     <h3 class="section-title">Mental Health/Communication</h3>
                     <div class="form-group">
                         <label for="mentalHealthNotes">Mental health observations and communication notes</label>
-                        <textarea id="mentalHealthNotes" name="mentalHealthNotes" rows="3" placeholder="e.g., Joseph was very calm for most of the day however became quite agitated when..."></textarea>
+                        <textarea id="mentalHealthNotes" name="Mental Health Notes" rows="3" placeholder="e.g., Joseph was very calm for most of the day however became quite agitated when..."></textarea>
                     </div>
                 </div>
 
@@ -322,7 +328,7 @@
                     <h3 class="section-title">Requests</h3>
                     <div class="form-group">
                         <label for="clientRequests">Joseph's requests and special notes</label>
-                        <textarea id="clientRequests" name="clientRequests" rows="3" placeholder="e.g., Did Joseph ask for any requests during your shift for next time? Is there something Hala & Gavin might need informing of?"></textarea>
+                        <textarea id="clientRequests" name="Client Requests" rows="3" placeholder="e.g., Did Joseph ask for any requests during your shift for next time? Is there something Hala & Gavin might need informing of?"></textarea>
                     </div>
                 </div>
 
@@ -363,30 +369,6 @@
                             }
                         }
                     };
-                },
-                functions: {
-                    invoke: async function(functionName, options = {}) {
-                        try {
-                            const response = await fetch(`${url}/functions/v1/${functionName}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${key}`,
-                                },
-                                body: JSON.stringify(options.body || {})
-                            });
-
-                            if (!response.ok) {
-                                const errorText = await response.text();
-                                throw new Error(`Function error: ${response.status} - ${errorText}`);
-                            }
-
-                            const result = await response.json();
-                            return { data: result, error: null };
-                        } catch (error) {
-                            return { data: null, error: error };
-                        }
-                    }
                 }
             };
         }
@@ -420,53 +402,22 @@
             const { error } = await supabase
                 .from('shift_notes')
                 .insert([{
-                    worker_name: data.workerName,
-                    shift_date: data.shiftDate,
-                    worked_hours: parseFloat(data.workedHours) || 0,
-                    shift_notes: data.shiftNotes,
-                    travel_km: parseInt(data.travelKm) || 0,
-                    community_access: data.communityAccess || '',
-                    incidents: Array.isArray(data.incidents) ? data.incidents : (data.incidents ? [data.incidents] : []),
-                    incident_details: data.incidentDetails || '',
-                    mental_health_notes: data.mentalHealthNotes || '',
-                    client_requests: data.clientRequests || ''
+                    worker_name: data['Worker Name'],
+                    shift_date: data['Shift Date'],
+                    worked_hours: parseFloat(data['Hours Worked']) || 0,
+                    shift_notes: data['Shift Notes'],
+                    travel_km: parseInt(data['Travel KM']) || 0,
+                    community_access: data['Activities Location'] || '',
+                    incidents: data['Incidents'] ? (Array.isArray(data['Incidents']) ? data['Incidents'] : [data['Incidents']]) : [],
+                    incident_details: data['Incident Details'] || '',
+                    mental_health_notes: data['Mental Health Notes'] || '',
+                    client_requests: data['Client Requests'] || ''
                 }]);
             
             if (error) throw error;
-            return data;
         }
 
-        async function sendEmailViaSupabase(data) {
-            // Format incidents as array for the Edge Function
-            let incidentsArray = [];
-            if (data.incidents) {
-                if (Array.isArray(data.incidents)) {
-                    incidentsArray = data.incidents;
-                } else {
-                    incidentsArray = [data.incidents];
-                }
-            }
-
-            const { data: result, error } = await supabase.functions.invoke('send-shift-notes-email', {
-                body: {
-                    worker_name: data.workerName,
-                    shift_date: data.shiftDate,
-                    worked_hours: data.workedHours,
-                    shift_notes: data.shiftNotes,
-                    travel_km: parseInt(data.travelKm) || 0,
-                    community_access: data.communityAccess || '',
-                    incidents: incidentsArray,
-                    incident_details: data.incidentDetails || '',
-                    mental_health_notes: data.mentalHealthNotes || '',
-                    client_requests: data.clientRequests || ''
-                }
-            });
-
-            if (error) throw error;
-            return result;
-        }
-
-        // Form submission
+        // Form submission with dual approach
         document.getElementById('shiftNotesForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -495,22 +446,29 @@
                     }
                 }
 
-                // Save to database first
+                // Save to database
                 await saveToDatabase(data);
                 
-                // Send email via Supabase Edge Function
-                await sendEmailViaSupabase(data);
-                
-                showMessage('Shift notes saved successfully and email sent!', 'success');
-                
-                // Clear form except for worker name
-                this.reset();
-                document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
-                document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+                // Submit form to FormSubmit for email
+                const response = await fetch('https://formsubmit.co/harley@hyammovement.com', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showMessage('Shift notes saved successfully and email sent!', 'success');
+                    
+                    // Clear form except for worker name
+                    this.reset();
+                    document.getElementById('workerName').value = localStorage.getItem('workerName') || '';
+                    document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
+                } else {
+                    throw new Error('Email sending failed');
+                }
                 
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('Error submitting form: ' + error.message, 'error');
+                showMessage('Data saved to database, but email may have failed: ' + error.message, 'error');
             }
             
             submitBtn.disabled = false;
