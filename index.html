@@ -217,13 +217,6 @@
             }
         }
     </style>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-   (function(){
-      emailjs.init('EMfxa0g4SvB4XjTfI');
-   })();
-</script>
-
 </head>
 <body>
     <div class="container">
@@ -341,7 +334,7 @@
     </div>
 
     <script>
-        // Simple Supabase client implementation
+        // Enhanced Supabase client implementation
         function createSupabaseClient(url, key) {
             return {
                 from: function(table) {
@@ -370,6 +363,30 @@
                             }
                         }
                     };
+                },
+                functions: {
+                    invoke: async function(functionName, options = {}) {
+                        try {
+                            const response = await fetch(`${url}/functions/v1/${functionName}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${key}`,
+                                },
+                                body: JSON.stringify(options.body || {})
+                            });
+
+                            if (!response.ok) {
+                                const errorText = await response.text();
+                                throw new Error(`Function error: ${response.status} - ${errorText}`);
+                            }
+
+                            const result = await response.json();
+                            return { data: result, error: null };
+                        } catch (error) {
+                            return { data: null, error: error };
+                        }
+                    }
                 }
             };
         }
@@ -416,6 +433,27 @@
                 }]);
             
             if (error) throw error;
+            return data;
+        }
+
+        async function sendEmailViaSupabase(data) {
+            const { data: result, error } = await supabase.functions.invoke('send-shift-notes-email', {
+                body: {
+                    worker_name: data.workerName,
+                    shift_date: data.shiftDate,
+                    worked_hours: data.workedHours,
+                    shift_notes: data.shiftNotes,
+                    travel_km: data.travelKm || '',
+                    community_access: data.communityAccess || '',
+                    incidents: Array.isArray(data.incidents) ? data.incidents.join(', ') : (data.incidents || ''),
+                    incident_details: data.incidentDetails || '',
+                    mental_health_notes: data.mentalHealthNotes || '',
+                    client_requests: data.clientRequests || ''
+                }
+            });
+
+            if (error) throw error;
+            return result;
         }
 
         // Form submission
@@ -447,12 +485,11 @@
                     }
                 }
 
-                // Save to database
+                // Save to database first
                 await saveToDatabase(data);
                 
-                // Send email directly using Resend API
-                console.log("DATA TO EMAILJS:", data);
-                await sendEmailJS(data);
+                // Send email via Supabase Edge Function
+                await sendEmailViaSupabase(data);
                 
                 showMessage('Shift notes saved successfully and email sent!', 'success');
                 
@@ -469,55 +506,6 @@
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit & Save';
         });
-
-        async function sendEmailJS(data) {
-    const params = {
-        worker_name: data.workerName,
-        shift_date: data.shiftDate,
-        worked_hours: data.workedHours,
-        shift_notes: data.shiftNotes,
-        travel_km: data.travelKm || '',
-        community_access: data.communityAccess || '',
-        incidents: Array.isArray(data.incidents) ? data.incidents.join(', ') : (data.incidents || ''),
-        incident_details: data.incidentDetails || '',
-        mental_health_notes: data.mentalHealthNotes || '',
-        client_requests: data.clientRequests || ''
-    };
-
-    return emailjs.send('service_x73rd4l', 'template_vf36fym', params);
-}
-
-
-        // Add email sending function
-        async function sendEmail(data) {
-            // Call our Edge Function instead of Resend directly
-            const response = await fetch('https://adfqsfpfzbiwcxembchy.supabase.co/functions/v1/send-shift-notes-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkZnFzZnBmemJpd2N4ZW1iY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzNjE0NTMsImV4cCI6MjA2OTkzNzQ1M30.fEwJzYtfQg0W6N9eSLinvXbOwFol0Lwc_VxwHt9zdy4',
-                },
-                body: JSON.stringify({
-                    record: {
-                        worker_name: data.workerName,
-                        shift_date: data.shiftDate,
-                        worked_hours: parseFloat(data.workedHours) || 0,
-                        shift_notes: data.shiftNotes,
-                        travel_km: parseInt(data.travelKm) || 0,
-                        community_access: data.communityAccess || '',
-                        incidents: Array.isArray(data.incidents) ? data.incidents : (data.incidents ? [data.incidents] : []),
-                        incident_details: data.incidentDetails || '',
-                        mental_health_notes: data.mentalHealthNotes || '',
-                        client_requests: data.clientRequests || ''
-                    }
-                }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Email sending failed: ${response.status} - ${errorText}`);
-            }
-        }
     </script>
 </body>
 </html>
