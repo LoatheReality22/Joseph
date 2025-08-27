@@ -445,7 +445,13 @@
                 throw new Error(`EmailJS API error: ${response.status} - ${errorText}`);
             }
 
-            return response.json();
+           // Replace just this part in your sendEmailJSDirect function:
+try {
+    return await response.json();
+} catch (e) {
+    // If JSON parsing fails, return success anyway (EmailJS sent "OK")
+    return { success: true, message: "Email sent successfully" };
+}
         }
 
         // Form submission
